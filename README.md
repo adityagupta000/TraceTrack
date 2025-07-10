@@ -4,13 +4,41 @@
 
 A full-stack React and Flask-based web platform to manage lost and found items across campuses or organizations.
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Tech Stack](#-tech-stack) • [Screenshots](#-screenshots)
-
+• [Screenshots](#-screenshots) • [Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Tech Stack](#-tech-stack) 
 </div>
 
 ## 📋 Overview
 
 TraceTrack is a modern lost and found management system built with React, Flask, and MySQL. It allows users to report, browse, and claim lost/found items, while administrators manage operations through a secure dashboard. The system supports scheduled item cleanup and includes role-based access control, image uploads, and a feedback module.
+
+## 📸 Screenshots
+
+### 🔐 Register
+![Register Page](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/2.png)
+
+### 🔐 Login
+![Login Page](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/main/db_lab/1.png?raw=true)
+
+###  User Interface
+![User Dashboard](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/3.png)
+
+###  Item Registration
+![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/4.png)
+
+###  Item dashboard
+![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/437c414a2c774a256fcb03cd4c3bf2d64998e5f3/db_lab/5.png)
+
+###  Message Popup
+![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/437c414a2c774a256fcb03cd4c3bf2d64998e5f3/db_lab/6.png)
+
+### Claim Popup
+![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/437c414a2c774a256fcb03cd4c3bf2d64998e5f3/db_lab/7.png)
+
+### User Dashboard
+![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/437c414a2c774a256fcb03cd4c3bf2d64998e5f3/db_lab/8.png)
+
+### Admin Dashboard 
+![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/437c414a2c774a256fcb03cd4c3bf2d64998e5f3/db_lab/9.png)
 
 ## ✨ Features
 
@@ -50,29 +78,31 @@ TraceTrack is a modern lost and found management system built with React, Flask,
 ## 📁 Project Structure
 
 ```
-tracetrack/
-│
-├── frontend/
-│   ├── public/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       ├── App.jsx
-│       └── index.js
-│
-├── backend/
-│   ├── static/
-│   ├── templates/
-│   ├── scheduler.py            # APScheduler cleanup task
-│   ├── db_connection.py        # DB connector config
-│   ├── app.py                  # Flask app entry point
-│   └── routes/                 # Modular API routes
-│       ├── auth_routes.py
-│       ├── item_routes.py
-│       ├── claim_routes.py
-│       └── admin_routes.py
-│
-└── script.py                   # Exports project source code as PDF
+lost-and-found-frontend/
+├─ backend/
+│  ├─ static/
+│  │  └─ uploads/
+│  └─ app.py
+├─ src/
+│  ├─ components/
+│  │  ├─ AdminTable.js
+│  │  ├─ ClaimsTable.js
+│  │  ├─ FeedbackForm.js
+│  │  ├─ FlashMessage.js
+│  │  ├─ Header.js
+│  │  ├─ ItemTable.js
+│  │  └─ MessageList.js
+│  ├─ pages/
+│  │  ├─ AdminPage.js
+│  │  ├─ HomePage.js
+│  │  ├─ ItemRegisterPage.js
+│  │  ├─ ItemsPage.js
+│  │  ├─ LoginPage.js
+│  │  └─ RegisterPage.js
+│  ├─ App.css
+│  ├─ App.js
+└─ tailwind.config.js
+
 ```
 
 ## 🔧 Installation
@@ -158,24 +188,6 @@ npm run dev
 - ✅ Includes stored procedures for insert/update logic
 - ✅ Triggers for automated cleanup and claim control
 - ✅ Normalized schema for referential integrity
-
-## 📸 Screenshots
-
-### 🔐 Register
-![Register Page](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/2.png)
-
-### 🔐 Login
-![Login Page](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/main/db_lab/1.png?raw=true)
-
-### 🏠 User Interface
-![User Dashboard](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/3.png)
-
-### 📝 Item Registration
-![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/4.png)
-
-
-
-
 
 ---
 
