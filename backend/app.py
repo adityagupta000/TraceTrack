@@ -32,8 +32,8 @@ def allowed_file(filename):
 def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
-        user="root",
-        password="Mysql@123",
+        user="", /*Your MySQL username */
+        password="", /*Your MySQL password */
         database="lost_and_founds"
     )
 
