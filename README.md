@@ -161,17 +161,17 @@ npm run dev
 
 ## 📸 Screenshots
 
+### 🔐 Register
+![Register Page](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/2.png)
+
 ### 🔐 Login
-*Login page with secure authentication*
+![Login Page](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/main/db_lab/1.png?raw=true)
 
-### 🏠 Dashboard
-*User dashboard showing posted items and claims*
+### 🏠 User Interface
+![User Dashboard](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/3.png)
 
-### 📝 Report Item
-*Form to report lost or found items*
-
-### 🎛 Admin Panel
-*Administrative interface for managing the system*
+### 📝 Item Registration
+![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/4.png)
 
 
 
@@ -180,5 +180,5 @@ npm run dev
 ---
 
 <div align="center">
-Made with ❤️ to bring lost items and people back together.
+Made with ❤️ to bring lost items and humanity back together.
 </div>
