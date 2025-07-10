@@ -142,8 +142,8 @@ cd tracetrack/frontend
 npm install
 
 # Start development server
-npm run dev
-# React app runs on http://localhost:5173
+npm start
+# React app runs on http://localhost:3000
 ```
 
 ## 🎯 Usage
