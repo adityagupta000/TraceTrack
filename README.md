@@ -19,9 +19,6 @@ TraceTrack is a modern lost and found management system built with React, Flask,
 ### 🔐 Login
 ![Login Page](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/main/db_lab/1.png?raw=true)
 
-###  User Interface
-![User Dashboard](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/3.png)
-
 ###  Item Registration
 ![Item Registration Form](https://github.com/adityagupta000/Lost_And_Found_Dbms/blob/920ad653d0447d985e2882857dd9f86a49977dca/db_lab/4.png)
 
