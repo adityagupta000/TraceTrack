@@ -189,5 +189,5 @@ npm start
 ---
 
 <div align="center">
-Made with ❤️ to bring lost items and humanity back together.
+Made with ❤️ to bring lost and Found items and humanity back together.
 </div>
