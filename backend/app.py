@@ -32,8 +32,8 @@ def allowed_file(filename):
 def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
-        user="", /*Your MySQL username */
-        password="", /*Your MySQL password */
+        user="root",
+        password="Mysql@123",
         database="lost_and_founds"
     )
 
@@ -331,6 +331,39 @@ def send_message():
     finally:
         conn.close()
 
+@app.route("/api/reply", methods=["POST"])
+def api_reply_message():
+    if "user_id" not in session:
+        return jsonify({"error": "Please log in to send messages."}), 401
+
+    data = request.get_json()
+    receiver_id = data.get("receiver_id")
+    item_id = data.get("item_id")
+    reply_text = data.get("message")
+
+    if not all([receiver_id, item_id, reply_text]):
+        return jsonify({"error": "All fields are required."}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            INSERT INTO messages (sender_id, receiver_id, item_id, message, sent_at)
+            VALUES (%s, %s, %s, %s, NOW())
+            """,
+            (session["user_id"], receiver_id, item_id, reply_text),
+        )
+        conn.commit()
+        return jsonify({"success": True, "message": "Reply sent successfully!"})
+    except mysql.connector.Error:
+        return jsonify({"error": "Error sending reply."}), 500
+    finally:
+        conn.close()
+
+
+
 @app.route("/api/feedback", methods=["POST"])
 @login_required
 def submit_feedback():
@@ -353,6 +386,21 @@ def submit_feedback():
         return jsonify({"success": True, "message": "Thank you for your feedback!"})
     except Exception as e:
         return jsonify({"error": "Failed to submit feedback"}), 500
+    finally:
+        conn.close()
+
+@app.route("/api/admin/feedback/<int:feedback_id>", methods=["DELETE"])
+@admin_required
+def delete_feedback(feedback_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM feedback WHERE id = %s", (feedback_id,))
+        conn.commit()
+        return jsonify({"success": True, "message": "Feedback deleted successfully"})
+    except Exception as e:
+        print("Error deleting feedback:", e)
+        return jsonify({"error": "Failed to delete feedback"}), 500
     finally:
         conn.close()
 
@@ -514,27 +562,36 @@ def delete_claim(claim_id):
     cursor = conn.cursor()
 
     try:
-        # Get the item_id before deleting the claim
+        # Step 1: Get item_id for the claim
         cursor.execute("SELECT item_id FROM claims WHERE id = %s", (claim_id,))
         result = cursor.fetchone()
-        
-        if result:
-            item_id = result[0]
-            
-            # Delete the claim
-            cursor.execute("DELETE FROM claims WHERE id = %s", (claim_id,))
-            
-            # Update item status back to available
-            cursor.execute("UPDATE items SET status = 'available' WHERE id = %s", (item_id,))
-            
-            conn.commit()
-            return jsonify({"success": True, "message": "Claim deleted successfully"})
-        else:
+
+        if not result:
             return jsonify({"error": "Claim not found"}), 404
+
+        item_id = result[0]
+
+        print(f"➡️ Deleting claim_id={claim_id}, linked item_id={item_id}")
+
+        # Step 2: Delete the claim
+        cursor.execute("DELETE FROM claims WHERE id = %s", (claim_id,))
+
+        # Step 3: Only update item status if it was 'claimed'
+        cursor.execute(
+            "UPDATE items SET status = 'found' WHERE id = %s AND status = 'claimed'",
+            (item_id,)
+        )
+
+        conn.commit()
+        return jsonify({"success": True, "message": "Claim deleted and item status updated"})
+
     except Exception as e:
-        return jsonify({"error": "Failed to delete claim"}), 500
+        import traceback
+        traceback.print_exc()  # Log full error to terminal
+        return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
+
 
 # Background job for cleaning old claims
 def delete_old_claims():

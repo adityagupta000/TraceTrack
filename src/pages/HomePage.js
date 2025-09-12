@@ -7,7 +7,7 @@ import ClaimsTable from "../components/ClaimsTable";
 export default function HomePage() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [role, setRole] = useState(""); // ✅ new state to track user role
+  const [role, setRole] = useState("");
   const [items, setItems] = useState([]);
   const [claims, setClaims] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -32,7 +32,7 @@ export default function HomePage() {
         const data = await res.json();
 
         setName(data.user.name);
-        setRole(data.user.role); // ✅ capture role from backend
+        setRole(data.user.role);
         setItems(data.items || []);
         setClaims(data.claims || []);
         setMessages(data.messages || []);
@@ -84,52 +84,52 @@ export default function HomePage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold text-center text-blue-600">
-        Welcome, {name}
-      </h1>
+    <div className="p-6 max-w-6xl mx-auto space-y-10">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-gray-800">Welcome, {name}</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Here’s an overview of your account and activity.
+        </p>
+      </div>
 
-      <section>
-        <h2 className="text-xl font-semibold text-gray-700 mb-2">
-          My Registered Items
-        </h2>
+      <section className="bg-white p-6 rounded-2xl shadow-sm border">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">My Registered Items</h2>
         <ItemTable items={items} />
       </section>
 
-      <section>
-        <h2 className="text-xl font-semibold text-gray-700 mb-2">My Claims</h2>
+      <section className="bg-white p-6 rounded-2xl shadow-sm border">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">My Claims</h2>
         <ClaimsTable claims={claims} />
       </section>
 
-      <section>
-        <h2 className="text-xl font-semibold text-gray-700 mb-2">Messages</h2>
+      <section className="bg-white p-6 rounded-2xl shadow-sm border">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Messages</h2>
         <MessageList messages={messages} />
       </section>
 
-      {/* ✅ Only show feedback for non-admin users */}
       {role !== "admin" && (
-        <section>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
-            Platform Feedback
-          </h2>
-          <form onSubmit={handleFeedbackSubmit} className="space-y-2">
+        <section className="bg-white p-6 rounded-2xl shadow-sm border">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Platform Feedback</h2>
+          <form onSubmit={handleFeedbackSubmit} className="space-y-4">
             <textarea
               rows={4}
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
               placeholder="Write your feedback here..."
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
               required
             />
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-            >
-              Submit Feedback
-            </button>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition"
+              >
+                Submit Feedback
+              </button>
+            </div>
           </form>
           {feedbackMessage && (
-            <div className="mt-2 text-sm text-center text-green-600">
+            <div className="mt-3 text-sm text-center text-green-600">
               {feedbackMessage}
             </div>
           )}

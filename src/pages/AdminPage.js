@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminTable from "../components/AdminTable";
+import toast, { Toaster } from "react-hot-toast";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 export default function AdminPage() {
   const navigate = useNavigate();
@@ -9,9 +14,8 @@ export default function AdminPage() {
   const [claims, setClaims] = useState([]);
   const [users, setUsers] = useState([]);
   const [feedback, setFeedback] = useState([]);
-  const [message, setMessage] = useState("");
 
-  // Step 1: Fetch user and validate admin access
+  // 🔐 Step 1: Validate Admin Access
   const validateAdminAccess = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/user", {
@@ -21,21 +25,20 @@ export default function AdminPage() {
       if (!res.ok) throw new Error("Not authenticated");
 
       const user = await res.json();
-
       if (!user || user.role !== "admin") {
-        navigate("/"); // not admin, redirect
+        toast.error("Access denied. Redirecting...");
+        navigate("/");
         return false;
       }
-
       return true;
     } catch (err) {
-      console.warn("Admin access denied:", err);
-      navigate("/"); // redirect if not admin
+      toast.error("Error validating admin access.");
+      navigate("/");
       return false;
     }
   };
 
-  // Step 2: Load admin dashboard data
+  // 📦 Step 2: Fetch Admin Dashboard Data
   const fetchAdminData = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/admin/dashboard", {
@@ -50,8 +53,7 @@ export default function AdminPage() {
       setUsers(data.users || []);
       setFeedback(data.feedback || []);
     } catch (err) {
-      console.error("Admin fetch error", err);
-      setMessage("❌ Failed to load admin data.");
+      toast.error("Failed to load admin data.");
     } finally {
       setLoading(false);
     }
@@ -65,41 +67,64 @@ export default function AdminPage() {
     init();
   }, []);
 
-  // Step 3: Handle item/user/claim/feedback deletion
+  // 🗑️ Step 3: Delete Handler with Confirmation
   const handleDelete = async (type, id) => {
-    const url = `http://localhost:5000/api/admin/${type}s/${id}`;
-    const res = await fetch(url, {
-      method: "DELETE",
-      credentials: "include",
+    const confirmed = await MySwal.fire({
+      title: `Delete this ${type}?`,
+      text: `This action cannot be undone.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
     });
 
-    if (res.ok) {
-      setMessage(`✅ ${type} deleted successfully.`);
-      await fetchAdminData(); // reload fresh data
+    if (!confirmed.isConfirmed) return;
+
+    let url;
+    if (type === "feedback") {
+      url = `http://localhost:5000/api/admin/feedback/${id}`;
     } else {
-      setMessage(`❌ Failed to delete ${type}.`);
+      url = `http://localhost:5000/api/admin/${type}s/${id}`;
+    }
+
+    try {
+      const res = await fetch(url, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        toast.success(
+          `${type.charAt(0).toUpperCase() + type.slice(1)} deleted.`
+        );
+        await fetchAdminData();
+      } else {
+        const data = await res.json();
+        toast.error(data?.error || ` Failed to delete ${type}.`);
+      }
+    } catch (err) {
+      toast.error(`Error deleting ${type}.`);
     }
   };
 
-  // Step 4: Show loader until page is ready
+  // ⏳ Step 4: Show loader while validating
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-500">
-        🔐 Verifying admin access...
+        Verifying admin access...
       </div>
     );
   }
 
-  // Step 5: Render admin page
+  // 🎯 Step 5: Render Admin Dashboard
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-      <h1 className="text-2xl font-bold text-center text-blue-600">
+      <Toaster position="top-center w-half" />
+
+      <h1 className="text-2xl font-bold text-center text-blue-600 mb-4">
         Admin Dashboard
       </h1>
-
-      {message && (
-        <div className="text-center text-sm text-green-700">{message}</div>
-      )}
 
       {/* Items Table */}
       <AdminTable

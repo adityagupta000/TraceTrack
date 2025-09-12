@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CameraIcon } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function RegisterItemPage() {
   const navigate = useNavigate();
@@ -10,29 +12,30 @@ export default function RegisterItemPage() {
     status: "lost",
   });
   const [image, setImage] = useState(null);
-  const [message, setMessage] = useState("");
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleFileChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!image) {
-      setMessage("❌ Please select an image file.");
+      toast.error("Please select an image file.");
       return;
     }
 
     const data = new FormData();
-    data.append("name", formData.name);
-    data.append("description", formData.description);
-    data.append("location", formData.location);
-    data.append("status", formData.status);
+    Object.entries(formData).forEach(([key, val]) => data.append(key, val));
     data.append("image", image);
 
     try {
@@ -43,89 +46,138 @@ export default function RegisterItemPage() {
       });
 
       if (res.ok) {
-        const result = await res.json();
-        setMessage("✅ Item registered successfully!");
+        toast.success("Item registered successfully!");
         setTimeout(() => navigate("/lost-found-items"), 2000);
       } else {
         const err = await res.json();
-        setMessage(`❌ ${err.error || "Failed to register item."}`);
+        toast.error(err.error || "Failed to register item.");
       }
     } catch (err) {
       console.error(err);
-      setMessage("❌ Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 px-4">
-      <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
-        Register Lost / Found Item
-      </h2>
+    <div className="max-w-3xl mx-auto px-4 py-10">
+      {/* Toast container */}
+      <Toaster position="top-center" reverseOrder={false} />
 
-      {message && (
-        <div className="mb-4 text-center text-sm text-gray-700">{message}</div>
-      )}
+      <div className="bg-white shadow-xl rounded-xl p-8 border">
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-blue-600 flex justify-center items-center gap-2">
+            <CameraIcon className="w-6 h-6" />
+            Register Lost / Found Item
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Submit the details to help match items with their rightful owners.
+          </p>
+        </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4 bg-white p-6 rounded shadow"
-      >
-        <input
-          type="text"
-          name="name"
-          placeholder="Item Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Item Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Item Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="e.g., Black Wallet"
+            />
+          </div>
 
-        <textarea
-          name="description"
-          placeholder="Item Description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-          rows={4}
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              rows={4}
+              className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Provide details like color, size, features..."
+            />
+          </div>
 
-        <input
-          type="text"
-          name="location"
-          placeholder="Lost/Found Location"
-          value={formData.location}
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+          {/* Location */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Location
+            </label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              required
+              className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Where was it found/lost?"
+            />
+          </div>
 
-        <select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="lost">Lost</option>
-          <option value="found">Found</option>
-        </select>
+          {/* Status */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            >
+              <option value="lost">Lost</option>
+              <option value="found">Found</option>
+            </select>
+          </div>
 
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={handleFileChange}
-          required
-          className="w-full"
-        />
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Upload Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              required
+              className="w-full"
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
-          Register Item
-        </button>
-      </form>
+          {/* Preview */}
+          {previewUrl && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Preview
+              </label>
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="w-full max-h-[400px] object-contain border rounded shadow"
+              />
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition"
+            >
+              Register Item
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
